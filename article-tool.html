@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>כלי אינטראקטיבי לקריאת מאמרים וכתיבת סקירת ספרות</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6789bd;
+            --accent-color: #e2e8f0;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 0;
+        }
+        section {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .tab-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 400px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            background-color: var(--accent-color);
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        .tab.active {
+            background-color: white;
+            border-color: #ddd;
+            border-bottom-color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            flex-grow: 1;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        .article-list {
+            list-style: none;
+            padding: 0;
+        }
+        .article-item {
+            background-color: var(--accent-color);
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .article-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .notes-container {
+            margin-top: 20px;
+        }
+        .citation {
+            background-color: var(--accent-color);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        .question-block {
+            background-color: var(--accent-color);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .literature-review-tips {
+            background-color: #f0f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        #bibliography-output {
+            white-space: pre-wrap;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        #template-container {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>כלי אינטראקטיבי לקריאת מאמרים וכתיבת סקירת ספרות</h1>
+            <p>נהל את המאמרים שלך, ענה על שאלות מנחות ויצר סקירת ספרות מקצועית</p>
+        </header>
+
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="articles">מאמרים</div>
+                <div class="tab" data-tab="reading">תהליך קריאה</div>
+                <div class="tab" data-tab="questions">שאלות מנחות</div>
+                <div class="tab" data-tab="notes">סיכומים</div>
+                <div class="tab" data-tab="literature-review">סקירת ספרות</div>
+                <div class="tab" data-tab="bibliography">ביבליוגרפיה</div>
+            </div>
+
+            <!-- מאמרים -->
+            <div class="tab-content active" id="articles">
+                <h2>ניהול מאמרים</h2>
+                <form id="article-form">
+                    <input type="text" id="article-title" placeholder="שם המאמר" required>
+                    <input type="text" id="article-authors" placeholder="שמות המחברים (מופרדים בפסיקים)" required>
+                    <input type="text" id="article-journal" placeholder="שם כתב העת או הספר">
+                    <input type="number" id="article-year" placeholder="שנת פרסום" min="1900" max="2030">
+                    <input type="text" id="article-doi" placeholder="DOI (אם יש)">
+                    <select id="article-type">
+                        <option value="מחקר אמפירי">מחקר אמפירי</option>
+                        <option value="מאמר סקירה">מאמר סקירה</option>
+                        <option value="מחקר תיאורטי">מחקר תיאורטי</option>
+                        <option value="מטה-אנליזה">מטה-אנליזה</option>
+                        <option value="אחר">אחר</option>
+                    </select>
+                    <button type="submit">הוסף מאמר</button>
+                </form>
+
+                <h3>המאמרים שלי</h3>
+                <ul id="article-list" class="article-list">
+                    <!-- רשימת המאמרים תתווסף כאן ע"י JavaScript -->
+                </ul>
+            </div>
+
+            <!-- תהליך קריאה -->
+            <div class="tab-content" id="reading">
+                <h2>תהליך קריאת מאמר</h2>
+                <select id="reading-article-select">
+                    <option value="">בחר מאמר לקריאה</option>
+                </select>
+
+                <div id="reading-progress">
+                    <h3>התקדמות</h3>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="reading-progress-bar"></div>
+                    </div>
+                    <p id="progress-status">0% הושלם</p>
+                </div>
+
+                <div id="reading-steps">
+                    <h3>שלבי קריאה מומלצים</h3>
+                    
+                    <div class="question-block">
+                        <h4>שלב 1: קריאה ראשונית</h4>
+                        <p>קרא את התקציר, המבוא והמסקנות כדי לקבל תמונה כללית.</p>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="step1-checkbox" class="reading-step">
+                            <label for="step1-checkbox">השלמתי קריאה ראשונית</label>
+                        </div>
+                        <textarea id="step1-notes" placeholder="הערות לגבי הקריאה הראשונית..."></textarea>
+                    </div>
+                    
+                    <div class="question-block">
+                        <h4>שלב 2: קריאה מעמיקה של המתודולוגיה</h4>
+                        <p>בחן את שיטת המחקר, המדגם, וכלי המחקר.</p>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="step2-checkbox" class="reading-step">
+                            <label for="step2-checkbox">השלמתי קריאת המתודולוגיה</label>
+                        </div>
+                        <textarea id="step2-notes" placeholder="הערות לגבי המתודולוגיה..."></textarea>
+                    </div>
+                    
+                    <div class="question-block">
+                        <h4>שלב 3: ניתוח התוצאות</h4>
+                        <p>בחן את הממצאים העיקריים ואת משמעותם.</p>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="step3-checkbox" class="reading-step">
+                            <label for="step3-checkbox">השלמתי ניתוח תוצאות</label>
+                        </div>
+                        <textarea id="step3-notes" placeholder="הערות לגבי התוצאות..."></textarea>
+                    </div>
+                    
+                    <div class="question-block">
+                        <h4>שלב 4: בחינה ביקורתית</h4>
+                        <p>הערך את איכות המחקר, מגבלותיו והשלכותיו.</p>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="step4-checkbox" class="reading-step">
+                            <label for="step4-checkbox">השלמתי בחינה ביקורתית</label>
+                        </div>
+                        <textarea id="step4-notes" placeholder="הערות ביקורתיות..."></textarea>
+                    </div>
+                    
+                    <button id="save-reading-progress">שמור התקדמות</button>
+                </div>
+            </div>
+
+            <!-- שאלות מנחות -->
+            <div class="tab-content" id="questions">
+                <h2>שאלות מנחות לקריאת מאמר</h2>
+                <select id="questions-article-select">
+                    <option value="">בחר מאמר</option>
+                </select>
+
+                <div id="questions-container">
+                    <div class="question-block">
+                        <h3>מטרת המחקר ותרומתו</h3>
+                        <ol>
+                            <li>מהי שאלת המחקר העיקרית?
+                                <textarea data-category="purpose" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>מהי התרומה התיאורטית של המחקר?
+                                <textarea data-category="purpose" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>מהי התרומה היישומית של המחקר?
+                                <textarea data-category="purpose" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="question-block">
+                        <h3>רקע תיאורטי</h3>
+                        <ol>
+                            <li>מהן התיאוריות המרכזיות שהמחקר נשען עליהן?
+                                <textarea data-category="theory" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>כיצד המאמר מתקשר למחקרים קודמים בתחום?
+                                <textarea data-category="theory" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>מהם המושגים המרכזיים במאמר?
+                                <textarea data-category="theory" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="question-block">
+                        <h3>מתודולוגיה</h3>
+                        <ol>
+                            <li>מהי שיטת המחקר שננקטה?
+                                <textarea data-category="methodology" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>מיהם המשתתפים במחקר (גודל המדגם, מאפיינים)?
+                                <textarea data-category="methodology" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>אילו כלים שימשו לאיסוף הנתונים?
+                                <textarea data-category="methodology" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>מהם המשתנים העיקריים שנבדקו?
+                                <textarea data-category="methodology" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="question-block">
+                        <h3>תוצאות ומסקנות</h3>
+                        <ol>
+                            <li>מהם הממצאים העיקריים?
+                                <textarea data-category="results" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>האם התוצאות תומכות בהשערות המחקר?
+                                <textarea data-category="results" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>מהן המסקנות העיקריות של המחברים?
+                                <textarea data-category="results" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>אילו מגבלות צוינו במחקר?
+                                <textarea data-category="results" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="question-block">
+                        <h3>הערכה ביקורתית</h3>
+                        <ol>
+                            <li>מהן נקודות החוזק של המחקר?
+                                <textarea data-category="evaluation" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>מהן נקודות החולשה של המחקר?
+                                <textarea data-category="evaluation" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>אילו כיווני מחקר עתידיים מוצעים?
+                                <textarea data-category="evaluation" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                            <li>כיצד המחקר מתקשר לנושא המחקר שלך?
+                                <textarea data-category="evaluation" placeholder="תשובתך כאן..."></textarea>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <button id="save-questions">שמור תשובות</button>
+                </div>
+            </div>
+
+            <!-- סיכומים -->
+            <div class="tab-content" id="notes">
+                <h2>סיכומי מאמרים</h2>
+                <select id="notes-article-select">
+                    <option value="">בחר מאמר</option>
+                </select>
+
+                <div id="notes-editor-container">
+                    <h3>סיכום המאמר</h3>
+                    <p>השתמש בסיכום זה כדי ליצור מסמך תמציתי שמכיל את הנקודות העיקריות של המאמר.</p>
+                    <textarea id="article-summary" placeholder="הכנס את סיכום המאמר כאן..." rows="10"></textarea>
+                    
+                    <h3>ציטוטים חשובים</h3>
+                    <textarea id="key-quotes" placeholder="הכנס ציטוטים חשובים מהמאמר..." rows="5"></textarea>
+                    
+                    <h3>רעיונות מרכזיים</h3>
+                    <textarea id="key-ideas" placeholder="רשום רעיונות מרכזיים מהמאמר..." rows="5"></textarea>
+                    
+                    <h3>קישורים לספרות אחרת</h3>
+                    <textarea id="literature-connections" placeholder="איך המאמר מתקשר למאמרים אחרים שקראת..." rows="5"></textarea>
+                    
+                    <button id="save-notes">שמור סיכומים</button>
+                    <button id="generate-summary">יצר סיכום מהתשובות לשאלות</button>
+                </div>
+            </div>
+
+            <!-- סקירת ספרות -->
+            <div class="tab-content" id="literature-review">
+                <h2>יצירת סקירת ספרות</h2>
+                
+                <div class="literature-review-tips">
+                    <h3>טיפים ליצירת סקירת ספרות מקצועית</h3>
+                    <ul>
+                        <li>ארגן את הסקירה לפי תמות או נושאים, ולא לפי מאמרים בודדים</li>
+                        <li>התחל עם מבוא שמציג את הנושא וחשיבותו</li>
+                        <li>ציין את התקדמות המחקר בתחום לאורך זמן</li>
+                        <li>השווה בין גישות ותיאוריות שונות</li>
+                        <li>זהה פערים בספרות הקיימת</li>
+                        <li>סיים עם סיכום וכיווני מחקר עתידיים</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>הגדרת סקירת הספרות</h3>
+                    <input type="text" id="review-title" placeholder="כותרת סקירת הספרות">
+                    <textarea id="review-objectives" placeholder="מטרות סקירת הספרות שלך..." rows="3"></textarea>
+                    
+                    <h3>מבנה סקירת הספרות</h3>
+                    <select id="review-structure">
+                        <option value="thematic">ארגון נושאי (לפי תמות)</option>
+                        <option value="chronological">ארגון כרונולוגי (לפי התפתחות היסטורית)</option>
+                        <option value="methodological">ארגון מתודולוגי (לפי שיטות מחקר)</option>
+                    </select>
+                    
+                    <h3>בחירת מאמרים לסקירה</h3>
+                    <div id="review-article-selection">
+                        <!-- רשימת המאמרים תתווסף כאן ע"י JavaScript -->
+                    </div>
+                    
+                    <h3>יצירת הסקירה</h3>
+                    <button id="show-templates">בחר תבנית לסקירת ספרות</button>
+                    
+                    <div id="template-container">
+                        <select id="review-template">
+                            <option value="standard">תבנית סטנדרטית</option>
+                            <option value="extended">תבנית מורחבת</option>
+                            <option value="thesis">תבנית לתזה/דיסרטציה</option>
+                        </select>
+                        <button id="apply-template">החל תבנית</button>
+                    </div>
+                    
+                    <textarea id="literature-review-text" placeholder="תוכן סקירת הספרות..." rows="15"></textarea>
+                    
+                    <div class="export-buttons">
+                        <button id="save-review">שמור סקירה</button>
+                        <button id="export-review">ייצא לקובץ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ביבליוגרפיה -->
+            <div class="tab-content" id="bibliography">
+                <h2>יצירת ביבליוגרפיה</h2>
+                
+                <h3>סגנון ציטוט</h3>
+                <select id="citation-style">
+                    <option value="apa">APA (7th edition)</option>
+                    <option value="mla">MLA (8th edition)</option>
+                    <option value="chicago">Chicago</option>
+                    <option value="harvard">Harvard</option>
+                </select>
+                
+                <h3>בחירת מאמרים לביבליוגרפיה</h3>
+                <div id="bibliography-article-selection">
+                    <!-- רשימת המאמרים תתווסף כאן ע"י JavaScript -->
+                </div>
+                
+                <button id="generate-bibliography">צור ביבליוגרפיה</button>
+                
+                <h3>תוצאה</h3>
+                <div id="bibliography-output"></div>
+                
+                <div class="export-buttons">
+                    <button id="copy-bibliography">העתק ללוח</button>
+                    <button id="export-bibliography">ייצא לקובץ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // מאגר הנתונים המקומי
+        let articles = [];
+        let readingProgress = {};
+        let articleQuestions = {};
+        let articleNotes = {};
+        let literatureReview = {
+            title: '',
+            objectives: '',
+            structure: 'thematic',
+            content: '',
+            selectedArticles: []
+        };
+
+        // טעינת נתונים מהמקומי של הדפדפן בעת טעינת הדף
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromLocalStorage();
+            updateArticleSelects();
+            setupTabNavigation();
+            setupEventListeners();
+        });
+
+        // הגדרת ניווט בין טאבים
+        function setupTabNavigation() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // הסרת מצב אקטיבי מכל הטאבים והתוכן
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // הוספת מצב אקטיבי לטאב הנבחר ולתוכן המתאים
+                    tab.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // הגדרת מאזיני אירועים
+        function setupEventListeners() {
+            // טופס הוספת מאמר
+            document.getElementById('article-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addNewArticle();
+            });
+
+            // אירועי שמירה בכל החלקים
+            document.getElementById('save-reading-progress').addEventListener('click', saveReadingProgress);
+            document.getElementById('save-questions').addEventListener('click', saveQuestionAnswers);
+            document.getElementById('save-notes').addEventListener('click', saveArticleNotes);
+            document.getElementById('generate-summary').addEventListener('click', generateSummaryFromQuestions);
+            document.getElementById('save-review').addEventListener('click', saveLiteratureReview);
+            document.getElementById('export-review').addEventListener('click', exportLiteratureReview);
+            document.getElementById('show-templates').addEventListener('click', showTemplates);
+            document.getElementById('apply-template').addEventListener('click', applyReviewTemplate);
+            document.getElementById('generate-bibliography').addEventListener('click', generateBibliography);
+            document.getElementById('copy-bibliography').addEventListener('click', copyBibliography);
+            document.getElementById('export-bibliography').addEventListener('click', exportBibliography);
+
+            // עדכון תצוגה בעת שינוי בחירת מאמר
+            document.getElementById('reading-article-select').addEventListener('change', updateReadingView);
+            document.getElementById('questions-article-select').addEventListener('change', updateQuestionsView);
+            document.getElementById('notes-article-select').addEventListener('change', updateNotesView);
+
+            // עדכון התקדמות קריאה
+            document.querySelectorAll('.reading-step').forEach(checkbox => {
+                checkbox.addEventListener('change', updateReadingProgressBar);
+            });
+        }
+
+        // הוספת מאמר חדש
+        function addNewArticle() {
+            const newArticle = {
+                id: Date.now().toString(),
+                title: document.getElementById('article-title').value,
+                authors: document.getElementById('article-authors').value,
+                journal: document.getElementById('article-journal').value,
+                year: document.getElementById('article-year').value,
+                doi: document.getElementById('article-doi').value,
+                type: document.getElementById('article-type').value
+            };
+
+            articles.push(newArticle);
+            saveToLocalStorage();
+            renderArticleList();
+            updateArticleSelects();
+            
+            // איפוס הטופס
+            document.getElementById('article-form').reset();
+        }
+
+        // הצגת רשימת המאמרים
+        function renderArticleList() {
+            const articleList = document.getElementById('article-list');
+            articleList.innerHTML = '';
+
+            articles.forEach(article => {
+                const li = document.createElement('li');
+                li.className = 'article-item';
+                li.innerHTML = `
+                    <div>
+                        <strong>${article.title}</strong> (${article.year})
+                        <div>${article.authors}</div>
+                        <small>${article.journal}</small>
+                    </div>
+                    <div class="article-actions">
+                        <button onclick="startReading('${article.id}')">קרא</button>
+                        <button onclick="deleteArticle('${article.id}')">מחק</button>
+                    </div>
+                `;
+                articleList.appendChild(li);
+            });
+
+            // עדכון בחירת מאמרים לסקירת ספרות וביבליוגרפיה
+            renderReviewArticleSelection();
+            renderBibliographyArticleSelection();
+        }
+
+        // התחלת קריאת מאמר
+        function startReading(articleId) {
+            document.getElementById('reading-article-select').value = articleId;
+            
+            // מעבר לטאב קריאה
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector('.tab[data-tab="reading"]').classList.add('active');
+            document.getElementById('reading').classList.add('active');
+            
+            updateReadingView();
+        }
+
+        // מחיקת מאמר
+        function deleteArticle(articleId) {
+            if (confirm('האם אתה בטוח שברצונך למחוק את המאמר הזה?')) {
+                articles = articles.filter(article => article.id !== articleId);
+                
+                // מחיקת נתונים קשורים
+                delete readingProgress[articleId];
+                delete articleQuestions[articleId];
+                delete articleNotes[articleId];
+                
+                // עדכון אחסון ותצוגה
+                // שמירה ב-localStorage
+function saveToLocalStorage() {
+    localStorage.setItem('articles', JSON.stringify(articles));
+    localStorage.setItem('readingProgress', JSON.stringify(readingProgress));
+    localStorage.setItem('articleQuestions', JSON.stringify(articleQuestions));
+    localStorage.setItem('articleNotes', JSON.stringify(articleNotes));
+    localStorage.setItem('literatureReview', JSON.stringify(literatureReview));
+}
+
+// טעינה מ-localStorage
+function loadFromLocalStorage() {
+    if (localStorage.getItem('articles')) articles = JSON.parse(localStorage.getItem('articles'));
+    if (localStorage.getItem('readingProgress')) readingProgress = JSON.parse(localStorage.getItem('readingProgress'));
+    if (localStorage.getItem('articleQuestions')) articleQuestions = JSON.parse(localStorage.getItem('articleQuestions'));
+    if (localStorage.getItem('articleNotes')) articleNotes = JSON.parse(localStorage.getItem('articleNotes'));
+    if (localStorage.getItem('literatureReview')) literatureReview = JSON.parse(localStorage.getItem('literatureReview'));
+    
+    renderArticleList();
+}
+
+// עדכון תיבות הבחירה של המאמרים
+function updateArticleSelects() {
+    const selects = ['reading-article-select', 'questions-article-select', 'notes-article-select'];
+    
+    selects.forEach(selectId => {
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="">בחר מאמר</option>';
+        
+        articles.forEach(article => {
+            const option = document.createElement('option');
+            option.value = article.id;
+            option.textContent = article.title;
+            select.appendChild(option);
+        });
+    });
+}
+
+// פונקציות נוספות שחסרות בקוד המקורי
+function updateReadingView() {
+    const articleId = document.getElementById('reading-article-select').value;
+    if (!articleId) return;
+    
+    // טעינת התקדמות קריאה אם קיימת
+    if (readingProgress[articleId]) {
+        const progress = readingProgress[articleId];
+        
+        // עדכון תיבות הסימון
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`step${i}-checkbox`).checked = progress[`step${i}`] || false;
+            document.getElementById(`step${i}-notes`).value = progress[`step${i}Notes`] || '';
+        }
+    } else {
+        // איפוס אם אין התקדמות קיימת
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`step${i}-checkbox`).checked = false;
+            document.getElementById(`step${i}-notes`).value = '';
+        }
+    }
+    
+    updateReadingProgressBar();
+}
+
+// שמירת התקדמות קריאה
+function saveReadingProgress() {
+    const articleId = document.getElementById('reading-article-select').value;
+    if (!articleId) return;
+    
+    const progress = {};
+    
+    // שמירת מצב תיבות הסימון והערות
+    for (let i = 1; i <= 4; i++) {
+        progress[`step${i}`] = document.getElementById(`step${i}-checkbox`).checked;
+        progress[`step${i}Notes`] = document.getElementById(`step${i}-notes`).value;
+    }
+    
+    readingProgress[articleId] = progress;
+    saveToLocalStorage();
+    
+    alert('התקדמות הקריאה נשמרה בהצלחה!');
+    updateReadingProgressBar();
+}
+
+// עדכון סרגל התקדמות קריאה
+function updateReadingProgressBar() {
+    const checkboxes = document.querySelectorAll('.reading-step');
+    let checked = 0;
+    
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) checked++;
+    });
+    
+    const progressPercent = (checked / checkboxes.length) * 100;
+    document.getElementById('reading-progress-bar').style.width = progressPercent + '%';
+    document.getElementById('progress-status').textContent = Math.round(progressPercent) + '% הושלם';
+}
+
+// עדכון תצוגת שאלות
+function updateQuestionsView() {
+    const articleId = document.getElementById('questions-article-select').value;
+    if (!articleId) return;
+    
+    // טעינת תשובות אם קיימות
+    const textareas = document.querySelectorAll('#questions-container textarea');
+    
+    if (articleQuestions[articleId]) {
+        textareas.forEach(textarea => {
+            const category = textarea.getAttribute('data-category');
+            const index = Array.from(document.querySelectorAll(`textarea[data-category="${category}"]`)).indexOf(textarea);
+            textarea.value = articleQuestions[articleId][category] ? 
+                             articleQuestions[articleId][category][index] || '' : '';
+        });
+    } else {
+        // איפוס אם אין תשובות קיימות
+        textareas.forEach(textarea => {
+            textarea.value = '';
+        });
+    }
+}
+
+// שמירת תשובות לשאלות
+function saveQuestionAnswers() {
+    const articleId = document.getElementById('questions-article-select').value;
+    if (!articleId) return;
+    
+    const answers = {};
+    
+    // איסוף תשובות לפי קטגוריות
+    const categories = ['purpose', 'theory', 'methodology', 'results', 'evaluation'];
+    
+    categories.forEach(category => {
+        const categoryTextareas = document.querySelectorAll(`textarea[data-category="${category}"]`);
+        answers[category] = Array.from(categoryTextareas).map(textarea => textarea.value);
+    });
+    
+    articleQuestions[articleId] = answers;
+    saveToLocalStorage();
+    
+    alert('התשובות נשמרו בהצלחה!');
+}
+
+// עדכון תצוגת סיכומים
+function updateNotesView() {
+    const articleId = document.getElementById('notes-article-select').value;
+    if (!articleId) return;
+    
+    // טעינת סיכומים אם קיימים
+    if (articleNotes[articleId]) {
+        document.getElementById('article-summary').value = articleNotes[articleId].summary || '';
+        document.getElementById('key-quotes').value = articleNotes[articleId].quotes || '';
+        document.getElementById('key-ideas').value = articleNotes[articleId].ideas || '';
+        document.getElementById('literature-connections').value = articleNotes[articleId].connections || '';
+    } else {
+        // איפוס אם אין סיכומים קיימים
+        document.getElementById('article-summary').value = '';
+        document.getElementById('key-quotes').value = '';
+        document.getElementById('key-ideas').value = '';
+        document.getElementById('literature-connections').value = '';
+    }
+}
+
+// שמירת סיכומי מאמר
+function saveArticleNotes() {
+    const articleId = document.getElementById('notes-article-select').value;
+    if (!articleId) return;
+    
+    const notes = {
+        summary: document.getElementById('article-summary').value,
+        quotes: document.getElementById('key-quotes').value,
+        ideas: document.getElementById('key-ideas').value,
+        connections: document.getElementById('literature-connections').value
+    };
+    
+    articleNotes[articleId] = notes;
+    saveToLocalStorage();
+    
+    alert('הסיכומים נשמרו בהצלחה!');
+}
+
+// יצירת סיכום מתשובות לשאלות
+function generateSummaryFromQuestions() {
+    const articleId = document.getElementById('notes-article-select').value;
+    if (!articleId) {
+        alert('בחר מאמר תחילה');
+        return;
+    }
+    
+    if (!articleQuestions[articleId]) {
+        alert('אין תשובות לשאלות עבור מאמר זה. השלם את שאלות המנחה תחילה.');
+        return;
+    }
+    
+    const questions = articleQuestions[articleId];
+    const article = articles.find(a => a.id === articleId);
+    
+    let summary = `סיכום המאמר "${article.title}" מאת ${article.authors} (${article.year}):\n\n`;
+    
+    // בניית סיכום מהתשובות
+    if (questions.purpose && questions.purpose[0]) summary += `מטרת המחקר: ${questions.purpose[0]}\n\n`;
+    
+    if (questions.theory && questions.theory[0]) {
+        summary += `רקע תיאורטי:\n`;
+        summary += `התיאוריות המרכזיות: ${questions.theory[0]}\n`;
+        if (questions.theory[2]) summary += `מושגים מרכזיים: ${questions.theory[2]}\n\n`;
+    }
+    
+    if (questions.methodology && questions.methodology[0]) {
+        summary += `מתודולוגיה:\n`;
+        summary += `שיטת המחקר: ${questions.methodology[0]}\n`;
+        if (questions.methodology[1]) summary += `משתתפים: ${questions.methodology[1]}\n`;
+        if (questions.methodology[2]) summary += `כלים: ${questions.methodology[2]}\n\n`;
+    }
+    
+    if (questions.results && questions.results[0]) {
+        summary += `תוצאות:\n${questions.results[0]}\n\n`;
+        if (questions.results[2]) summary += `מסקנות: ${questions.results[2]}\n\n`;
+    }
+    
+    if (questions.evaluation && questions.evaluation[0]) {
+        summary += `הערכה ביקורתית:\n`;
+        summary += `חוזקות: ${questions.evaluation[0]}\n`;
+        if (questions.evaluation[1]) summary += `חולשות: ${questions.evaluation[1]}\n`;
+        if (questions.evaluation[2]) summary += `כיווני מחקר עתידיים: ${questions.evaluation[2]}\n\n`;
+    }
+    
+    document.getElementById('article-summary').value = summary;
+}
+
+// הצגת תבניות לסקירת ספרות
+function showTemplates() {
+    document.getElementById('template-container').style.display = 'block';
+}
+
+// יישום תבנית לסקירת ספרות
+function applyReviewTemplate() {
+    const template = document.getElementById('review-template').value;
+    const title = document.getElementById('review-title').value || 'סקירת ספרות';
+    const objectives = document.getElementById('review-objectives').value || '';
+    const structure = document.getElementById('review-structure').value;
+    
+    let templateContent = '';
+    
+    switch(template) {
+        case 'standard':
+            templateContent = `# ${title}
+
+## מבוא
+${objectives}
+
+## רקע תיאורטי
+[כאן יש לכתוב את הרקע התיאורטי לנושא]
+
+## מתודולוגיות מחקר בתחום
+[כאן יש לסקור את שיטות המחקר העיקריות בתחום]
+
+## ממצאים עיקריים
+[כאן יש לסקור את הממצאים העיקריים מהספרות]
+
+## דיון ומסקנות
+[כאן יש לדון במשמעות הממצאים ובמסקנות העולות מהספרות]
+
+## כיווני מחקר עתידיים
+[כאן יש להציע כיווני מחקר עתידיים]
+
+## ביבליוגרפיה
+[רשימת מקורות]`;
+            break;
+            
+        case 'extended':
+            templateContent = `# ${title}
+
+## מבוא
+${objectives}
+
+### חשיבות הנושא
+[כאן יש להסביר מדוע הנושא חשוב]
+
+### היקף הסקירה
+[כאן יש להגדיר את גבולות הסקירה]
+
+## התפתחות היסטורית של התחום
+[כאן יש לסקור את ההתפתחות ההיסטורית של התחום]
+
+## מסגרות תיאורטיות מרכזיות
+[כאן יש לסקור את התיאוריות המרכזיות בתחום]
+
+### תיאוריה א'
+[פירוט]
+
+### תיאוריה ב'
+[פירוט]
+
+## מתודולוגיות נפוצות
+[כאן יש לסקור את שיטות המחקר הנפוצות בתחום]
+
+## ממצאים עיקריים לפי נושאים
+
+### נושא א'
+[ממצאים]
+
+### נושא ב'
+[ממצאים]
+
+### נושא ג'
+[ממצאים]
+
+## סינתזה ואינטגרציה
+[כאן יש ליצור אינטגרציה בין הממצאים השונים]
+
+## פערים בספרות
+[כאן יש לציין פערים בידע הקיים]
+
+## השלכות יישומיות
+[כאן יש לדון בהשלכות היישומיות של הממצאים]
+
+## כיווני מחקר עתידיים
+[כאן יש להציע כיווני מחקר עתידיים]
+
+## סיכום ומסקנות
+[סיכום הסקירה ומסקנות עיקריות]
+
+## ביבליוגרפיה
+[רשימת מקורות]`;
+            break;
+            
+        case 'thesis':
+            templateContent = `# ${title}
+
+## פרק 1: מבוא
+${objectives}
+
+### 1.1 רקע כללי
+[כאן יש לספק רקע כללי על הנושא]
+
+### 1.2 הצגת הבעיה המחקרית
+[כאן יש להציג את הבעיה המחקרית]
+
+### 1.3 חשיבות המחקר
+[כאן יש להסביר את חשיבות המחקר]
+
+### 1.4 מטרות המחקר
+[כאן יש לפרט את מטרות המחקר]
+
+### 1.5 שאלות המחקר
+[כאן יש לפרט את שאלות המחקר]
+
+## פרק 2: סקירת ספרות
+
+### 2.1 רקע היסטורי
+[כאן יש לסקור את ההתפתחות ההיסטורית של התחום]
+
+### 2.2 מסגרות תיאורטיות
+[כאן יש לסקור את התיאוריות המרכזיות]
+
+### 2.3 מחקרים אמפיריים קודמים
+[כאן יש לסקור מחקרים אמפיריים קודמים]
+
+### 2.4 מתודולוגיות מחקר נפוצות
+[כאן יש לסקור שיטות מחקר נפוצות בתחום]
+
+### 2.5 ממצאים עיקריים בספרות
+[כאן יש לסקור את הממצאים העיקריים]
+
+### 2.6 פערים בספרות
+[כאן יש לציין פערים בידע הקיים]
+
+### 2.7 המחקר הנוכחי בהקשר הספרות
+[כאן יש למקם את המחקר הנוכחי בהקשר הספרות]
+
+## פרק 3: תוצאות מהספרות וסינתזה
+[כאן יש ליצור סינתזה של הממצאים מהספרות]
+
+## פרק 4: דיון ומסקנות
+[כאן יש לדון במשמעות הממצאים ולהסיק מסקנות]
+
+## ביבליוגרפיה
+[רשימת מקורות]`;
+            break;
+    }
+    
+    document.getElementById('literature-review-text').value = templateContent;
+    saveLiteratureReview();
+}
+
+// שמירת סקירת ספרות
+function saveLiteratureReview() {
+    literatureReview.title = document.getElementById('review-title').value;
+    literatureReview.objectives = document.getElementById('review-objectives').value;
+    literatureReview.structure = document.getElementById('review-structure').value;
+    literatureReview.content = document.getElementById('literature-review-text').value;
+    
+    // שמירת מאמרים נבחרים
+    const checkboxes = document.querySelectorAll('#review-article-selection input[type="checkbox"]');
+    literatureReview.selectedArticles = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+    
+    saveToLocalStorage();
+    alert('סקירת הספרות נשמרה בהצלחה!');
+}
+
+// ייצוא סקירת ספרות
+function exportLiteratureReview() {
+    const content = document.getElementById('literature-review-text').value;
+    const filename = (document.getElementById('review-title').value || 'literature-review') + '.md';
+    
+    const blob = new Blob([content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// הצגת בחירת מאמרים לסקירת ספרות
+function renderReviewArticleSelection() {
+    const container = document.getElementById('review-article-selection');
+    container.innerHTML = '';
+    
+    articles.forEach(article => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <input type="checkbox" id="review-article-${article.id}" value="${article.id}" 
+                ${literatureReview.selectedArticles && literatureReview.selectedArticles.includes(article.id) ? 'checked' : ''}>
+            <label for="review-article-${article.id}">${article.title} (${article.year})</label>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// הצגת בחירת מאמרים לביבליוגרפיה
+function renderBibliographyArticleSelection() {
+    const container = document.getElementById('bibliography-article-selection');
+    container.innerHTML = '';
+    
+    articles.forEach(article => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <input type="checkbox" id="bib-article-${article.id}" value="${article.id}">
+            <label for="bib-article-${article.id}">${article.title} (${article.year})</label>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// יצירת ביבליוגרפיה
+function generateBibliography() {
+    const style = document.getElementById('citation-style').value;
+    const checkboxes = document.querySelectorAll('#bibliography-article-selection input[type="checkbox"]:checked');
+    const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+    
+    if (selectedIds.length === 0) {
+        alert('בחר לפחות מאמר אחד ליצירת ביבליוגרפיה');
+        return;
+    }
+    
+    const selectedArticles = articles.filter(article => selectedIds.includes(article.id));
+    let bibliography = '';
+    
+    switch(style) {
+        case 'apa':
+            bibliography = generateApaStyle(selectedArticles);
+            break;
+        case 'mla':
+            bibliography = generateMlaStyle(selectedArticles);
+            break;
+        case 'chicago':
+            bibliography = generateChicagoStyle(selectedArticles);
+            break;
+        case 'harvard':
+            bibliography = generateHarvardStyle(selectedArticles);
+            break;
+    }
+    
+    document.getElementById('bibliography-output').textContent = bibliography;
+}
+
+// יצירת ביבליוגרפיה בסגנון APA
+function generateApaStyle(selectedArticles) {
+    return selectedArticles.map(article => {
+        const authors = formatAuthorsApa(article.authors);
+        return `${authors} (${article.year}). ${article.title}. ${article.journal ? article.journal + '.' : ''} ${article.doi ? 'https://doi.org/' + article.doi : ''}`;
+    }).join('\n\n');
+}
+
+// יצירת ביבליוגרפיה בסגנון MLA
+function generateMlaStyle(selectedArticles) {
+    return selectedArticles.map(article => {
+        const authors = formatAuthorsMla(article.authors);
+        return `${authors}. "${article.title}." ${article.journal ? article.journal : ''}, ${article.year}. ${article.doi ? 'https://doi.org/' + article.doi : ''}`;
+    }).join('\n\n');
+}
+
+// יצירת ביבליוגרפיה בסגנון Chicago
+function generateChicagoStyle(selectedArticles) {
+    return selectedArticles.map(article => {
+        const authors = formatAuthorsChicago(article.authors);
+        return `${authors}. "${article.title}." ${article.journal ? article.journal : ''} (${article.year}). ${article.doi ? 'https://doi.org/' + article.doi : ''}`;
+    }).join('\n\n');
+}
+
+// יצירת ביבליוגרפיה בסגנון Harvard
+function generateHarvardStyle(selectedArticles) {
+    return selectedArticles.map(article => {
+        const authors = formatAuthorsHarvard(article.authors);
+        return `${authors} ${article.year}, '${article.title}', ${article.journal ? article.journal : ''}. ${article.doi ? 'https://doi.org/' + article.doi : ''}`;
+    }).join('\n\n');
+}
+
+// פורמט מחברים בסגנון APA
+function formatAuthorsApa(authorsStr) {
+    const authors = authorsStr.split(',').map(a => a.trim());
+    
+    if (authors.length === 1) {
+        return authors[0];
+    } else if (authors.length === 2) {
+        return `${authors[0]} & ${authors[1]}`;
+    } else if (authors.length > 2) {
+        return `${authors[0]} et al.`;
+    }
+    
+    return authorsStr;
+}
+
+// פורמט מחברים בסגנון MLA
+function formatAuthorsMla(authorsStr) {
+    const authors = authorsStr.split(',').map(a => a.trim());
+    
+    if (authors.length === 1) {
+        return authors[0];
+    } else if (authors.length === 2) {
+        return `${authors[0]}, and ${authors[1]}`;
+    } else if (authors.length > 2) {
+        return `${authors[0]}, et al`;
+    }
+    
+    return authorsStr;
+}
+
+// פורמט מחברים בסגנון Chicago
+function formatAuthorsChicago(authorsStr) {
+    const authors = authorsStr.split(',').map(a => a.trim());
+    
+    if (authors.length === 1) {
+        return authors[0];
+    } else if (authors.length === 2) {
+        return `${authors[0]} and ${authors[1]}`;
+    } else if (authors.length === 3) {
+        return `${authors[0]}, ${authors[1]}, and ${authors[2]}`;
+    } else if (authors.length > 3) {
+        return `${authors[0]} et al.`;
+    }
+    
+    return authorsStr;
+}
+
+// פורמט מחברים בסגנון Harvard
+function formatAuthorsHarvard(authorsStr) {
+    const authors = authorsStr.split(',').map(a => a.trim());
+    
+    if (authors.length === 1) {
+        return authors[0];
+    } else if (authors.length === 2) {
+        return `${authors[0]} & ${authors[1]}`;
+    } else if (authors.length === 3) {
+        return `${authors[0]}, ${authors[1]} & ${authors[2]}`;
+    } else if (authors.length > 3) {
+        return `${authors[0]} et al.`;
+    }
+    
+    return authorsStr;
+}
+
+// העתקת ביבליוגרפיה ללוח
+function copyBibliography() {
+    const text = document.getElementById('bibliography-output').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('הביבליוגרפיה הועתקה ללוח בהצלחה!');
+    });
+}
+
+// ייצוא ביבליוגרפיה לקובץ
+function exportBibliography() {
+    const content = document.getElementById('bibliography-output').textContent;
+    const style = document.getElementById('citation-style').value;
+    const filename = `bibliography-${style}.txt`;
+    
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// ייצוא נתונים ל-GitHub
+function exportToGitHub() {
+    const data = {
+        articles: articles,
+        readingProgress: readingProgress,
+        articleQuestions: articleQuestions,
+        articleNotes: articleNotes,
+        literatureReview: literatureReview,
+        exportDate: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(data, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
